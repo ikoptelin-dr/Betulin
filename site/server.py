@@ -21,6 +21,8 @@ from urllib.parse import parse_qs, urlparse
 
 ROOT = Path(__file__).resolve().parent
 CODE_RE = re.compile(r"^[a-z0-9_-]{1,40}$")
+EVENT_RE = re.compile(r"^(cta|scroll):[a-z0-9_-]{1,30}$")
+EVENTS_PER_MINUTE = 600
 MAX_BODY = 4096
 LEADS_PER_HOUR = 60
 
@@ -54,6 +56,7 @@ class App:
         self.base = urlparse(self.cfg["base_url"]).path.rstrip("/")
         self.lock = threading.Lock()
         self.recent = []
+        self.events = []
 
     def row(self, name, header, row):
         path = self.data / name
@@ -75,6 +78,15 @@ class App:
             if len(self.recent) >= LEADS_PER_HOUR:
                 return True
             self.recent.append(t)
+        return False
+
+    def events_full(self):
+        t = time.time()
+        with self.lock:
+            self.events = [x for x in self.events if t - x < 60]
+            if len(self.events) >= EVENTS_PER_MINUTE:
+                return True
+            self.events.append(t)
         return False
 
     def max_url(self, code):
@@ -189,6 +201,8 @@ def make_handler(app):
 
         def do_POST(self):
             rel = self._rel()
+            if rel == "/e":
+                return self._event()
             if rel != "/order":
                 return self._send(HTTPStatus.NOT_FOUND, b"not found", "text/plain; charset=utf-8")
             try:
@@ -210,11 +224,32 @@ def make_handler(app):
                 return self._send(HTTPStatus.TOO_MANY_REQUESTS, app.error_page("generic").encode("utf-8"))
             source = form.get("source", "")
             source = source if CODE_RE.match(source) else ""
+            pack = form.get("pack", "1")
+            pack = pack if pack in ("1", "2") else "1"
+            via = form.get("via", "call")
+            via = via if via in ("call", "max") else "call"
             app.row(
-                "leads.csv", ["ts_utc", "name", "phone_digits", "source", "consent"],
-                [app.now(), clean_cell(form.get("name", "")), digits, source, "yes"],
+                "leads.csv", ["ts_utc", "name", "phone_digits", "source", "consent", "pack", "via"],
+                [app.now(), clean_cell(form.get("name", "")), digits, source, "yes", pack, via],
             )
             self._redirect(thanks, HTTPStatus.SEE_OTHER)
+
+        def _event(self):
+            """Счётчик нажатий и прокрутки: только событие и метка канала, без IP и cookie."""
+            try:
+                n = int(self.headers.get("Content-Length", "0"))
+            except ValueError:
+                n = -1
+            if n <= 0 or n > 300:
+                return self._send(HTTPStatus.BAD_REQUEST, b"", "text/plain; charset=utf-8")
+            form = {k: v[0] for k, v in parse_qs(self.rfile.read(n).decode("utf-8", "replace")).items()}
+            ev, src = form.get("ev", ""), form.get("s", "")
+            if not EVENT_RE.match(ev):
+                return self._send(HTTPStatus.BAD_REQUEST, b"", "text/plain; charset=utf-8")
+            src = src if CODE_RE.match(src) else ""
+            if not app.events_full():
+                app.row("events.csv", ["ts_utc", "event", "source"], [app.now(), ev, src])
+            self._send(HTTPStatus.NO_CONTENT, b"", "text/plain; charset=utf-8")
 
     return Handler
 

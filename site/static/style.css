@@ -2,10 +2,6 @@
   src: url(fonts/manrope-cyrillic.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
 @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 200 800; font-display: swap;
   src: url(fonts/manrope-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212; }
-@font-face { font-family: 'Golos Text'; font-style: normal; font-weight: 400 900; font-display: swap;
-  src: url(fonts/golos-text-cyrillic.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
-@font-face { font-family: 'Golos Text'; font-style: normal; font-weight: 400 900; font-display: swap;
-  src: url(fonts/golos-text-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212; }
 
 /* Крупный шрифт для чтения с телефона: база 20px, контраст выше 7:1 */
 :root {
@@ -20,7 +16,7 @@
   --note: #fff6dc;
   --note-line: #c99a1a;
   --font-display: 'Manrope', 'Segoe UI', system-ui, sans-serif;
-  --font-body: 'Golos Text', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Manrope', 'Segoe UI', system-ui, sans-serif;
   color-scheme: light;
 }
 * { box-sizing: border-box; }
@@ -34,12 +30,12 @@ body {
 .wrap { max-width: 42rem; margin: 0 auto; padding: 0 1rem; }
 section { padding: 2rem 0; }
 .tint { background: var(--tint); }
-h1, h2, h3 { font-family: var(--font-display); font-weight: 800; letter-spacing: -.02em; line-height: 1.15; margin: 0 0 .75rem; text-wrap: balance; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing: 0; line-height: 1.15; margin: 0 0 .75rem; text-wrap: balance; }
 p, li { text-wrap: pretty; }
 strong, b { font-weight: 700; }
 h1 { font-size: 2.4rem; }
 h2 { font-size: 1.7rem; }
-h3 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.01em; margin-top: 1.5rem; }
+h3 { font-size: 1.25rem; font-weight: 700; letter-spacing: 0; margin-top: 1.5rem; }
 .small-h { font-size: 1rem; margin: 1rem 0 .25rem; }
 p, ul, ol { margin: 0 0 1rem; }
 ul { padding-left: 1.3rem; }
@@ -65,7 +61,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 
 .top { border-bottom: 1px solid var(--line); background: var(--bg); }
 .top .wrap { display: flex; flex-wrap: wrap; gap: .25rem 1rem; align-items: center; padding-top: .5rem; padding-bottom: .5rem; }
-.brand { font-family: var(--font-display); font-weight: 800; letter-spacing: .16em; text-decoration: none; color: var(--brand); font-size: 1.15rem; }
+.brand { font-family: var(--font-display); font-weight: 700; letter-spacing: .16em; text-decoration: none; color: var(--brand); font-size: 1.15rem; }
 nav { display: flex; flex-wrap: wrap; gap: 0 .25rem; }
 nav a { padding: .6rem .5rem; min-height: 44px; display: inline-flex; align-items: center; }
 
@@ -88,7 +84,7 @@ nav a { padding: .6rem .5rem; min-height: 44px; display: inline-flex; align-item
 .steps li::before {
   content: counter(step); position: absolute; left: 0; top: .15rem; width: 2.6rem; height: 2.6rem;
   border-radius: 50%; background: var(--brand); color: var(--brand-ink);
-  display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; font-size: 1.3rem;
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 1.3rem;
 }
 .steps h3 { margin: 0 0 .25rem; }
 
@@ -181,7 +177,7 @@ body.lp .btn { color: #fff; }
   display: inline-block; padding: .35rem .9rem; border-radius: 99px; font-size: .9rem; font-weight: 700;
   color: var(--lp-deep); background: rgba(255, 255, 255, .8); border: 1px solid rgba(17, 80, 96, .25);
 }
-.lp-hero h1 { font-size: 2.2rem; letter-spacing: -.01em; }
+.lp-hero h1 { font-size: 2.2rem; letter-spacing: 0; }
 @media (min-width: 62rem) { .lp-hero h1 { font-size: 3rem; } }
 .grad {
   display: block; color: var(--lp-deep);
@@ -201,7 +197,7 @@ body.lp .btn { color: #fff; }
 .card { padding: 1.5rem; }
 @media (min-width: 40rem) { .card { padding: 2rem; } }
 .card h2 { font-size: 1.5rem; }
-.price { font-size: 1.5rem; font-weight: 800; }
+.price { font-size: 1.5rem; font-weight: 700; }
 .price .muted { font-weight: 400; }
 .order .btn { width: 100%; }
 
@@ -215,7 +211,7 @@ body.lp .btn { color: #fff; }
 .cards3 li { margin: 0; padding: 1.25rem; min-width: 0; }
 .cards3 li p:last-child { margin-bottom: 0; }
 .tagrow { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; justify-content: space-between; }
-.tag { font-weight: 800; color: var(--lp-deep); font-size: 1.15rem; }
+.tag { font-weight: 700; color: var(--lp-deep); font-size: 1.15rem; }
 .where { font-size: .9rem; padding: .15rem .6rem; border-radius: 99px; border: 1px solid rgba(17, 80, 96, .35); color: var(--lp-deep); }
 .cards3 .muted a { overflow-wrap: anywhere; }
 .note h3 { margin-top: 0; }
@@ -233,14 +229,14 @@ body.lp .steps li::before, body.lp .tracker input:checked + span { background: v
 .lp h2::after { content: ""; display: block; width: 3.2rem; height: 5px; border-radius: 3px; margin-top: .7rem; background: linear-gradient(90deg, var(--lp-teal), var(--lp-sky)); }
 .lp .final h2::after { margin-inline: auto; }
 .lp .card h2::after { display: none; }
-.lp-hero h1 { font-weight: 600; font-size: clamp(2.2rem, 7vw, 3.5rem); line-height: 1.04; letter-spacing: -.03em; }
-.lp-hero h1 .grad { font-weight: 800; }
+.lp-hero h1 { font-weight: 600; font-size: clamp(2.2rem, 7vw, 3.5rem); line-height: 1.04; letter-spacing: 0; }
+.lp-hero h1 .grad { font-weight: 700; }
 .lp .lead { font-size: 1.22rem; line-height: 1.55; max-width: 36rem; }
 .lp .final .lead, .lp .narrow.lead { max-width: 42rem; }
 .final .lead { margin-inline: auto; }
 .pill { font-family: var(--font-display); letter-spacing: .02em; }
 .trust .label, .where { font-family: var(--font-display); }
-.tag { font-family: var(--font-display); letter-spacing: -.01em; }
+.tag { font-family: var(--font-display); letter-spacing: 0; }
 .price { font-family: var(--font-display); }
 .checks li { font-weight: 500; }
 .badge { font-family: var(--font-display); letter-spacing: .01em; }

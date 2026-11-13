@@ -89,7 +89,7 @@ class Builder:
         return esc(self._subst(s))
 
     # ---------- общие куски ----------
-    def head(self, title, desc_html=""):
+    def head(self, title, desc_html="", css="style.css"):
         d = f'<meta name="description" content="{desc_html}">' if desc_html else ""
         return (
             '<!doctype html>\n<html lang="ru"><head><meta charset="utf-8">'
@@ -97,8 +97,7 @@ class Builder:
             f"<title>{title}</title>{d}"
             '<link rel="icon" href="data:,">'
             f'<link rel="preload" href="{self.base}/static/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>'
-            f'<link rel="preload" href="{self.base}/static/fonts/golos-text-cyrillic.woff2" as="font" type="font/woff2" crossorigin>'
-            f'<link rel="stylesheet" href="{self.base}/static/style.css">'
+            f'<link rel="stylesheet" href="{self.base}/static/{css}">'
             "</head>"
         )
 
@@ -288,101 +287,216 @@ class Builder:
         return self.head(self.ui(m["title"]), self.claimed(m["description"])) + "<body>" + body
 
     # ---------- продающая страница ----------
-    DROPS = (
-        '<svg class="drops" viewBox="0 0 320 420" aria-hidden="true" focusable="false">'
-        '<path fill="#7dd3cb" fill-opacity=".55" d="M176 8c44 30 70 66 62 104-6 30-34 46-62 40-30-6-48-34-40-66 6-26 22-52 40-78z"/>'
-        '<path fill="#ade2e1" fill-opacity=".7" d="M98 120c30 22 46 50 38 78-6 22-28 34-48 28-22-6-34-28-26-52 6-20 20-38 36-54z"/>'
-        '<path fill="#b6e4e9" fill-opacity=".85" d="M190 190c-34 52-52 98-40 142 8 32 40 50 70 40 32-10 46-44 34-80-10-34-34-70-64-102z"/>'
-        '<path fill="#4cb3b2" fill-opacity=".35" d="M262 150c18 26 26 50 18 70-6 16-24 24-38 16-16-8-20-28-10-46 8-14 18-28 30-40z"/>'
-        "</svg>"
+    TICK = (
+        '<svg class="tick" width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#115060"/>'
+        '<path d="M6.5 11.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     )
+    ICONS = {
+        "doc": "M8 5h6l3 3v11H8z M14 5v3h3 M10 12h5 M10 15h5",
+        "factory": "M5 19V11l4 2V11l4 2V8l6 3v8z M5 19h14",
+        "book": "M6 6h5a2 2 0 0 1 2 2v10a2 2 0 0 0-2-2H6z M18 6h-5 M18 6v10h-5",
+        "truck": "M4 8h9v8H4z M13 11h4l3 3v2h-7z M7 18a1.5 1.5 0 1 0 0-.01 M17 18a1.5 1.5 0 1 0 0-.01",
+    }
+
+    def tx(self, x):
+        """Строка подписи или объект с утверждением."""
+        return self.claimed(x) if isinstance(x, dict) else self.ui(x)
+
+    def icon(self, name):
+        return (
+            '<svg class="ico" width="40" height="40" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="8" fill="#ade2e1"/>'
+            f'<path d="{self.ICONS[name]}" fill="none" stroke="#115060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        )
+
+    def cta(self, cid, label=None, cls="btn"):
+        L = self.lp
+        text = self.tx(label) if label is not None else self.claimed(L["cta_price"])
+        return f'<a class="{cls}" href="#zayavka" data-cta="{esc(cid)}">{text}</a>'
+
+    def cta_row(self, cid, label=None):
+        return f'<div class="cta-row">{self.cta(cid, label)}<p>{self.claimed(self.lp["callback"])}</p></div>'
+
+    def sec(self, sid, kicker, h2, inner, cls=""):
+        sid_attr = f' id="{esc(sid)}"' if sid else ""
+        return (
+            f'<section class="block gut {cls}"{sid_attr} data-sec="{esc(sid or cls)}"><div class="wrap">'
+            f'<p class="kicker">{self.ui(kicker)}</p><h2>{self.ui(h2)}</h2>{inner}</div></section>'
+        )
+
+    def lp_form(self):
+        z, o = self.site["zakaz"], self.lp["offer"]
+        packs = "".join(
+            f'<label class="opt"><input type="radio" name="pack" value="{esc(p["id"])}"{" checked" if p["id"] == "1" else ""}>'
+            f'<span><b>{self.ui(p["name"])}</b> · {self.claimed(p["price"])}</span></label>'
+            for p in o["packs"]
+        )
+        return (
+            f'<form method="post" action="{self.base}/order" class="form" id="order-form">'
+            f'<h3>{self.ui(o["form_h3"])}</h3>'
+            f'<fieldset class="seg"><legend>{self.ui(o["pack_label"])}</legend>{packs}</fieldset>'
+            f'<label for="f-name">{self.ui(z["label_name"])}</label>'
+            '<input id="f-name" name="name" type="text" autocomplete="name" maxlength="80">'
+            f'<label for="f-phone">{self.ui(z["label_phone"])}</label>'
+            '<input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="25" placeholder="+7">'
+            f'<fieldset class="seg"><legend>{self.ui(o["via_label"])}</legend>'
+            f'<label class="opt"><input type="radio" name="via" value="call" checked><span>{self.ui(o["via_call"])}</span></label>'
+            f'<label class="opt"><input type="radio" name="via" value="max"><span>{self.ui(o["via_max"])}</span></label></fieldset>'
+            '<input type="hidden" name="source" id="f-source" value="">'
+            f'<div class="hp" aria-hidden="true"><label for="f-site">{self.ui(z["hp_label"])}</label>'
+            '<input id="f-site" name="website" tabindex="-1" autocomplete="off"></div>'
+            '<label class="consent" for="f-consent"><input id="f-consent" type="checkbox" name="consent" value="yes" required>'
+            f'<span>{self.ui(z["consent_before"])}<a href="{self.base}/policy">{self.ui(z["consent_link"])}</a></span></label>'
+            f'<button class="btn" type="submit" data-cta="form-submit">{self.ui(o["send"])}</button>'
+            f'<p class="after">{self.claimed(o["after_btn"])}</p>'
+            "</form>"
+        )
 
     def landing(self):
-        L, m = self.lp, self.lp["meta"]
-        h, card = L["hero"], L["card"]
-        base = self.base
-        benefits = "".join(f"<li>{self.claimed(b)}</li>" for b in h["benefits"])
-        price = ""
-        if self.cfg.get("price_text"):
-            price = f'<p class="price"><span class="muted">{self.ui(card["price_label"])}</span> {esc(self.cfg["price_text"])}</p>'
-        market = ""
-        if self.cfg.get("order_url"):
-            market = f'<p class="center"><a rel="noopener" href="{esc(self.cfg["order_url"])}">{self.ui(card["or_card"])}</a></p>'
+        L, base = self.lp, self.base
+        h = L["hero"]
+        ticks = "".join(f"<li>{self.TICK}<span>{self.claimed(t)}</span></li>" for t in h["ticks"])
+        chips = "".join(f'<span class="chip">{self.claimed(c)}</span>' for c in h["chips"])
+        stickers = "".join(
+            f'<div class="sticker"><b>{self.claimed(s["b"])}</b><span>{self.ui(s["s"])}</span></div>' for s in h["stickers"]
+        )
         hero = (
-            '<section class="lp-hero"><div class="wrap wide grid2">'
-            f'<div class="pitch">{self.DROPS}'
-            f'<p class="pill">{self.claimed(h["pill"])}</p>'
-            f'<h1>{self.ui(h["h1_a"])} <span class="grad">{self.ui(h["h1_b"])}</span></h1>'
-            f'<p class="lead">{self.claimed(h["lead"])}</p>'
-            f'<ul class="checks">{benefits}</ul>'
-            f'<p class="badge">{self.claimed(h["badge"])}</p></div>'
-            f'<div class="glass card" id="zayavka"><h2>{self.ui(card["h2"])}</h2>'
-            f'<p>{self.claimed(card["sub"])}</p>{price}{self.order_form()}{market}</div>'
+            '<section class="hero gut" data-sec="hero"><div class="wrap">'
+            f'<div class="h-top"><span class="eyebrow"><i></i>{self.claimed(h["pill"])}</span>'
+            f'<h1>{self.ui(h["h1_a"])} <span>{self.ui(h["h1_b"])}</span></h1></div>'
+            f'<div class="stage"><img class="leaf" alt="" src="{base}/static/img/leaf.webp" width="324" height="672">'
+            f'<div class="bwrap"><div class="bottle" role="img" aria-label="{self.ui(h["bottle_alt"])}">'
+            '<div class="cap"></div><div class="neck"></div><div class="body"></div></div><div class="floor"></div></div>'
+            f'<div class="stickers">{stickers}</div></div>'
+            f'<div class="h-rest"><p class="lead">{self.claimed(h["lead"])}</p><ul class="ticks">{ticks}</ul>'
+            '<div class="buy">'
+            f'<div class="row"><span class="price">{self.claimed(h["price"])}</span><span class="per">{self.claimed(h["per"])}</span></div>'
+            f'<p class="set">{self.claimed(h["set"])}</p>'
+            + self.cta("hero")
+            + f'<p class="callback"><span class="dot" aria-hidden="true"></span><b>{self.claimed(L["callback"])}</b></p>'
+            f'<div class="delivery">{chips}</div></div>'
+            f'<p class="legal">{self.claimed(h["legal"])}</p></div>'
             "</div></section>"
         )
-        t = L["trust"]
         trust = (
-            f'<section class="trust"><div class="wrap wide"><p class="label">{self.ui(t["label"])}</p><ul>'
-            + "".join(f"<li>{self.claimed(i)}</li>" for i in t["items"]) + "</ul></div></section>"
+            '<div class="trust gut"><div class="wrap"><ul>'
+            + "".join(
+                f'<li>{self.icon(t["icon"])}<span><b>{self.ui(t["b"])}</b><small>{self.claimed(t["s"])}</small></span></li>'
+                for t in L["trust"]
+            )
+            + "</ul></div></div>"
         )
-        st = L["story"]
-        story = (
-            f'<section><div class="wrap wide"><h2>{self.ui(st["h2"])}</h2><ul class="cards3">'
-            + "".join(f'<li class="glass">{self.ui(i)}</li>' for i in st["items"])
-            + f'</ul><p class="lead">{self.ui(st["turn"])}</p></div></section>'
+        u = L["utro"]
+        scenes = "".join(
+            f'<li class="scene"><span class="time">{self.ui(s["n"])}</span><p>{self.ui(s["t"])}</p></li>' for s in u["scenes"]
         )
-        c = L["cells"]
-        cells = (
-            f'<section><div class="wrap"><h2>{self.ui(c["h2"])}</h2>'
-            + "".join(f"<p>{self.claimed(p)}</p>" for p in c["paras"]) + "</div></section>"
+        utro = self.sec(
+            "utro", u["kicker"], u["h2"],
+            f'<ul class="scenes">{scenes}</ul><p class="lead turn">{self.ui(u["turn"])}</p>' + self.cta_row("utro"),
+        )
+        f = L["forma"]
+        was = "".join(f'<li><span class="x" aria-hidden="true">×</span><span>{self.tx(w)}</span></li>' for w in f["was"])
+        nums = "".join(
+            f'<div class="num"><b>{self.claimed(n["b"])}</b><span>{self.ui(n["s"])}</span></div>' for n in f["nums"]
+        )
+        forma = self.sec(
+            "forma", f["kicker"], f["h2"],
+            f'<p class="lead">{self.ui(f["lead"])}</p><div class="split"><ul class="was">{was}</ul>'
+            f'<div><div class="nums">{nums}</div><p class="note">{self.claimed(f["note"])}</p></div></div>'
+            + self.cta_row("forma"),
+        )
+        k = L["kletki"]
+        props = "".join(f'<li>{self.TICK}<span>{self.claimed(p)}</span></li>' for p in k["props"])
+        kletki = self.sec(
+            "kletki", k["kicker"], k["h2"],
+            f'<div class="split"><div><p class="lead">{self.claimed(k["p1"])}</p><p class="p2">{self.claimed(k["p2"])}</p></div>'
+            f'<div class="propcard"><ul class="props">{props}</ul><p class="small">{self.claimed(k["props_note"])}</p></div></div>',
+            "tintband",
         )
         n = L["nauka"]
         d = self.site["dokumenty"]
         cards = "".join(
-            f'<li class="glass"><p class="tagrow"><span class="tag">{self.ui(k["tag"])}</span>'
-            f'<span class="where">{self.ui(k["where"])}</span></p><p>{self.claimed(k["p"])}</p>'
-            f'<p class="muted">{self.ui(k["ref"])}. <a href="https://doi.org/{esc(k["doi"])}" rel="noopener">'
-            f'{self.ui(d["doi_label"])} {esc(k["doi"])}</a></p></li>'
-            for k in n["cards"]
+            f'<li class="card"><p class="tagrow"><span class="tag">{self.ui(c["tag"])}</span><span class="where">{self.ui(c["where"])}</span></p>'
+            f'<p>{self.claimed(c["p"])}</p><p class="ref">{self.ui(c["ref"])}. '
+            f'<a href="https://doi.org/{esc(c["doi"])}" rel="noopener">{self.ui(d["doi_label"])} {esc(c["doi"])}</a></p></li>'
+            for c in n["cards"]
         )
-        nauka = (
-            f'<section id="nauka"><div class="wrap wide"><h2>{self.ui(n["h2"])}</h2>'
-            f'<p class="lead narrow">{self.claimed(n["lead"])}</p><ul class="cards3">{cards}</ul>'
-            f'<div class="note narrow"><h3>{self.ui(n["honest_h3"])}</h3><p>{self.claimed(n["honest"])}</p></div>'
-            "</div></section>"
+        nauka = self.sec(
+            "nauka", n["kicker"], n["h2"],
+            f'<p class="lead">{self.claimed(n["lead"])}</p><ul class="cards">{cards}</ul>'
+            f'<div class="honest"><h3>{self.ui(n["honest_h3"])}</h3><p>{self.claimed(n["honest"])}</p></div>'
+            + self.cta_row("nauka", self.lp["cta_course"]),
         )
-        f = L["form"]
-        form = (
-            f'<section><div class="wrap"><h2>{self.ui(f["h2"])}</h2>'
-            + "".join(f"<p>{self.claimed(p)}</p>" for p in f["paras"]) + "</div></section>"
+        r, ks = L["ritual"], self.site["kak"]
+        steps = "".join(
+            f'<li><b>{self.ui(s["title"])}</b><span>{self.claimed(s["p"])}</span></li>' for s in ks["steps"]
         )
-        r, k = L["ritual"], self.site["kak"]
-        steps = "".join(f'<li><h3>{self.ui(s["title"])}</h3><p>{self.claimed(s["p"])}</p></li>' for s in k["steps"])
-        ritual = (
-            f'<section id="ritual"><div class="wrap"><h2>{self.ui(r["h2"])}</h2><ol class="steps">{steps}</ol>'
-            f'<p class="note">{self.claimed(r["course"])}</p>'
-            f'<p><a href="{base}/kak-prinimat">{self.ui(r["more"])}</a></p></div></section>'
+        ritual = self.sec(
+            "ritual", r["kicker"], r["h2"],
+            f'<ol class="steps4">{steps}</ol><p class="note">{self.claimed(r["course"])}</p>'
+            f'<p><a href="{base}/kak-prinimat" data-cta="howto-link">{self.ui(r["more"])}</a></p>' + self.cta_row("ritual"),
+            "tintband",
         )
+        pr = L["proof"]
+        items = "".join(
+            f'<li><b>{self.ui(i["b"])}</b><span>{self.claimed(i["s"])}</span></li>' for i in pr["items"]
+        )
+        proof = self.sec("dokumenty", pr["kicker"], pr["h2"], f'<ul class="prooflist">{items}</ul>')
         o = L["offer"]
+        packs = ""
+        for p in o["packs"]:
+            old = f'<s>{self.ui(p["old"])}</s>' if p.get("old") else ""
+            badge = f'<span class="disc">{self.ui(p["badge"])}</span>' if p.get("badge") else ""
+            packs += (
+                f'<div class="pack{" best" if badge else ""}">{badge}<p class="pname">{self.ui(p["name"])}</p>'
+                f'<p class="pprice">{self.claimed(p["price"])} {old}</p><p class="pnote">{self.claimed(p["note"])}</p>'
+                f'<a class="btn pick" href="#order-form" data-pack="{esc(p["id"])}" data-cta="pack-{esc(p["id"])}">{self.ui(o["pick"])}</a></div>'
+            )
+        incl = "".join(f"<li>{self.TICK}<span>{self.claimed(i)}</span></li>" for i in o["incl"])
+        after = "".join(f"<li>{self.claimed(a)}</li>" for a in o["after"])
         offer = (
-            f'<section><div class="wrap"><div class="glass card"><h2>{self.ui(o["h2"])}</h2><ul class="checks">'
-            + "".join(f"<li>{self.claimed(i)}</li>" for i in o["items"])
-            + f'</ul><p><a class="btn" href="#zayavka">{self.ui(o["btn"])}</a></p></div></div></section>'
+            '<section class="block gut offer" id="zayavka" data-sec="zayavka"><div class="wrap">'
+            f'<p class="kicker">{self.ui(o["kicker"])}</p><h2>{self.ui(o["h2"])}</h2>'
+            f'<div class="packs">{packs}</div>'
+            '<div class="offer-card"><div>'
+            f'<h3>{self.ui(o["incl_h3"])}</h3><ul class="incl">{incl}</ul>'
+            f'<h3>{self.ui(o["after_h3"])}</h3><ol class="steps3">{after}</ol></div>'
+            + self.lp_form()
+            + "</div></div></section>"
         )
-        fin = L["final"]
+        b = L["blizkim"]
+        blizkim = self.sec(
+            "blizkim", b["kicker"], b["h2"],
+            f'<p class="lead">{self.claimed(b["p"])}</p><div class="cta-row">{self.cta("blizkim", b["btn"])}</div>',
+        )
+        faq = "".join(
+            f'<details><summary>{self.ui(q["q"])}</summary><p>{self.claimed(q["a"])}</p></details>' for q in L["faq"]
+        )
+        faqsec = self.sec("voprosy", L["faq_kicker"], L["faq_h2"], f'<div class="faq">{faq}</div>' + self.cta_row("faq"), "tintband")
+        fi = L["final"]
         final = (
-            f'<section class="final"><div class="wrap"><h2>{self.ui(fin["h2"])}</h2><p class="lead">{self.claimed(fin["p"])}</p>'
-            f'<p><a class="btn" href="#zayavka">{self.ui(fin["btn"])}</a></p>'
-            f'<p>{self.ui(self.site["zakaz"]["call_before"])}{self.phone_link()}</p></div></section>'
+            '<section class="block gut final" data-sec="final"><div class="wrap">'
+            f'<h2>{self.ui(fi["h2"])}</h2><p class="lead">{self.claimed(fi["p"])}</p>'
+            f'<div class="cta-row center">{self.cta("final")}</div>'
+            f'<p class="call">{self.ui(fi["or_call"])}{self.phone_link()}</p></div></section>'
+        )
+        bar = (
+            f'<div class="bar"><div><b>{self.claimed(h["price"])}</b><span>{self.claimed(L["bar_sub"])}</span></div>'
+            f'{self.cta("bar", L["cta"])}</div>'
+        )
+        ui = self.site["ui"]
+        links = "".join(f'<a href="#{esc(x["id"])}">{self.ui(x["t"])}</a>' for x in L["nav"])
+        header = (
+            f'<a class="skip" href="#main">{self.ui(ui["skip"])}</a>'
+            f'<header class="top gut"><div class="wrap"><a class="brand" href="{base}/">{self.ui(ui["brand"])}</a>'
+            f'<nav aria-label="{self.ui(ui["nav_label"])}">{links}</nav>{self.cta("header", L["cta"])}</div></header>'
         )
         body = (
-            '<div class="aurora" aria-hidden="true"></div>'
-            + self.header(L["nav"], "", L["nav_cta"], "top glassnav") + '<main id="main">'
-            + hero + trust + story + cells + nauka + form + ritual + self.dokumenty() + offer
-            + self.faq(L["faq_ids"]) + final + "</main>" + self.footer()
+            header + '<main id="main">' + hero + trust + utro + forma + kletki + nauka + ritual + proof + offer
+            + blizkim + faqsec + final + "</main>" + self.footer() + bar
             + f'<script src="{base}/static/app.js" defer></script></body></html>'
         )
-        return self.head(self.ui(m["title"]), self.claimed(m["description"])) + '<body class="lp">' + body
+        m = L["meta"]
+        return self.head(self.ui(m["title"]), self.claimed(m["description"]), "landing.css") + '<body class="lp">' + body
 
     def policy(self):
         p = self.site["policy"]

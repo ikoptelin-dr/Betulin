@@ -39,4 +39,38 @@
     } catch (e) { /* без хранилища метка не сохранится */ }
     src.value = val;
   }
+
+  /* Свой счётчик: какая кнопка нажата и до куда прокрутили. Без cookie, IP и данных о человеке. */
+  function source() {
+    try { return sessionStorage.getItem("betula-source") || ""; } catch (e) { return ""; }
+  }
+  var endpoint = (document.querySelector("form[action$='/order']") || {}).action;
+  endpoint = endpoint ? endpoint.replace(/\/order$/, "/e") : "";
+  function send(ev) {
+    if (!endpoint || !navigator.sendBeacon) return;
+    var body = new Blob(["ev=" + encodeURIComponent(ev) + "&s=" + encodeURIComponent(source())], { type: "application/x-www-form-urlencoded" });
+    try { navigator.sendBeacon(endpoint, body); } catch (e) { /* счётчик не важнее страницы */ }
+  }
+  document.addEventListener("click", function (e) {
+    var el = e.target.closest ? e.target.closest("[data-cta]") : null;
+    if (el) send("cta:" + el.getAttribute("data-cta"));
+  });
+  /* Кнопка «Выбрать» на карточке набора отмечает набор в форме */
+  document.querySelectorAll("[data-pack]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var r = document.querySelector('input[name="pack"][value="' + a.getAttribute("data-pack") + '"]');
+      if (r) r.checked = true;
+      var ph = document.getElementById("f-phone");
+      if (ph) setTimeout(function () { ph.focus({ preventScroll: true }); }, 400);
+    });
+  });
+
+  var marks = [25, 50, 75, 100], sent = {};
+  function onScroll() {
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    if (h <= 0) return;
+    var pct = Math.round(window.scrollY / h * 100);
+    marks.forEach(function (m) { if (pct >= m && !sent[m]) { sent[m] = 1; send("scroll:" + m); } });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
 })();

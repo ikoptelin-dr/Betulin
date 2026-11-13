@@ -161,6 +161,27 @@ class BuildTests(unittest.TestCase):
             self.assertNotIn("обновлён", page)
             self.assertNotIn("13.11.2026", page)
 
+    def test_landing_sells_with_offer_and_many_ctas(self):
+        text = self.builder().landing()
+        self.assertGreaterEqual(text.count('href="#zayavka"'), 8)
+        for must in ("2 190 ₽", "3 504 ₽", "−20%", "Бесплатная доставка", "за 3 минуты", "RU.77.99.11.003.R.003611.10.20",
+                     'name="pack"', 'name="via"', 'class="bar"', "leaf.webp", "Не является лекарственным средством"):
+            self.assertIn(must, text, must)
+        self.assertEqual(text.count('name="consent"'), 1)
+        self.assertNotRegex(text, r'name="consent"[^>]*checked')
+
+    def test_landing_typography_single_family_max_700(self):
+        for name in ("landing.css", "style.css"):
+            css = (ROOT / "static" / name).read_text(encoding="utf-8")
+            self.assertNotIn("Golos", css, name)
+            weights = [int(w) for w in re.findall(r"font-weight:\s*(\d{3})", css)]
+            weights += [int(w) for w in re.findall(r"font:\s*(\d{3})\s", css)]
+            self.assertTrue(weights and max(weights) <= 700, (name, weights))
+            self.assertNotRegex(css, r"letter-spacing:\s*-", name)
+            for f in re.findall(r"url\((?:fonts|img)/([^)]+)\)", css):
+                self.assertTrue(list((ROOT / "static").rglob(f)), f)
+        self.assertIn("img/label-front.webp", (ROOT / "static" / "landing.css").read_text(encoding="utf-8"))
+
     def test_consent_checkbox_is_not_prechecked(self):
         text = self.builder().index()
         self.assertRegex(text, r'name="consent"[^>]*required')
@@ -303,6 +324,31 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(last["phone_digits"], "79230001122")
         self.assertEqual(last["source"], "label")
         self.assertEqual(last["consent"], "yes")
+
+    def test_order_saves_pack_and_contact_method(self):
+        self.post_order({"name": "Олег", "phone": "79230001133", "consent": "yes", "pack": "2", "via": "max"})
+        last = self.rows("leads.csv")[-1]
+        self.assertEqual((last["pack"], last["via"]), ("2", "max"))
+        self.post_order({"name": "Олег", "phone": "79230001134", "consent": "yes", "pack": "99", "via": "fax"})
+        last = self.rows("leads.csv")[-1]
+        self.assertEqual((last["pack"], last["via"]), ("1", "call"))
+
+    def test_events_counted_without_personal_data(self):
+        from urllib.parse import urlencode
+        h = {"Content-Type": "application/x-www-form-urlencoded", "User-Agent": "Spy/1.0"}
+        r, _ = self.req("POST", "/betula-aqua/e", urlencode({"ev": "cta:hero", "s": "trifold"}), h)
+        self.assertEqual(r.status, 204)
+        r, _ = self.req("POST", "/betula-aqua/e", urlencode({"ev": "scroll:50", "s": "<x>"}), h)
+        self.assertEqual(r.status, 204)
+        rows = self.rows("events.csv")
+        self.assertEqual((rows[-2]["event"], rows[-2]["source"]), ("cta:hero", "trifold"))
+        self.assertEqual((rows[-1]["event"], rows[-1]["source"]), ("scroll:50", ""))
+        text = (self.data / "events.csv").read_text(encoding="utf-8")
+        self.assertNotIn("Spy", text)
+        self.assertNotIn("127.0.0.1", text)
+        for bad in ("evil:1", "cta:<script>", "cta:" + "a" * 50):
+            r, _ = self.req("POST", "/betula-aqua/e", urlencode({"ev": bad}), h)
+            self.assertEqual(r.status, 400, bad)
 
     def test_order_honeypot_not_saved(self):
         before = len(self.rows("leads.csv"))
