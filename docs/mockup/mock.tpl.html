@@ -1,0 +1,294 @@
+<title>BETULA AQUA макет</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Макет: светлый лист этикетки, бирюзовые формы; один шрифт на вариант, вес не выше 700, шкала 1,25 */
+@font-face { font-family: 'Golos Text'; font-weight: 400 900; font-display: swap; src: url(data:font/woff2;base64,__GOLOS_CYR__) format('woff2'); unicode-range: U+0400-045F, U+2116; }
+@font-face { font-family: 'Golos Text'; font-weight: 400 900; font-display: swap; src: url(data:font/woff2;base64,__GOLOS_LAT__) format('woff2'); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2212; }
+@font-face { font-family: 'Manrope'; font-weight: 200 800; font-display: swap; src: url(data:font/woff2;base64,__MANROPE_CYR__) format('woff2'); unicode-range: U+0400-045F, U+2116; }
+@font-face { font-family: 'Manrope'; font-weight: 200 800; font-display: swap; src: url(data:font/woff2;base64,__MANROPE_LAT__) format('woff2'); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2212; }
+:root {
+  --paper: #f2f2f2; --white: #ffffff; --ink: #16292e; --ink-2: #3d5258;
+  --deep: #115060; --teal: #4cb3b2; --mint: #7dd3cb; --aqua: #ade2e1; --sky: #b6e4e9;
+  --line: rgba(17, 80, 96, .14);
+  --font: 'Golos Text', 'Segoe UI', system-ui, sans-serif;
+  --s0: 1rem; --s1: 1.25rem; --s2: 1.5625rem; --s3: 1.953rem; --s4: 2.441rem; --s5: 3.052rem;
+  color-scheme: light;
+}
+:root[data-font="manrope"] { --font: 'Manrope', 'Segoe UI', system-ui, sans-serif; }
+* { box-sizing: border-box; }
+html { font-size: 18px; }
+@media (min-width: 900px) { html { font-size: 19px; } }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font); font-weight: 400; line-height: 1.6; letter-spacing: 0; -webkit-font-smoothing: antialiased; }
+.gut { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1160px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--font); font-weight: 700; letter-spacing: 0; line-height: 1.15; margin: 0; text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+a { color: var(--deep); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 58px; padding: 0 1.6rem; border-radius: 14px; border: 0;
+  background: var(--deep); color: #fff; font: 600 var(--s1)/1 var(--font); text-decoration: none; cursor: pointer;
+  box-shadow: 0 14px 30px -14px rgba(17, 80, 96, .75); transition: transform .15s, filter .15s; }
+.btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+.btn.ghost { background: transparent; color: var(--deep); box-shadow: inset 0 0 0 2px rgba(17, 80, 96, .35); }
+:focus-visible { outline: 3px solid #b35c00; outline-offset: 3px; }
+
+/* Переключатель шрифта — только для макета */
+.switchbar { display: flex; justify-content: center; align-items: center; gap: .8rem; padding-block: .5rem; background: #e3eeed; font: 500 15px/1.3 system-ui, sans-serif; color: var(--ink-2); flex-wrap: wrap; }
+.switch { display: flex; gap: 6px; padding: 6px; border-radius: 12px; background: rgba(255,255,255,.9); box-shadow: 0 6px 20px -8px rgba(0,0,0,.3); font: 600 14px/1 system-ui, sans-serif; }
+.switch button { border: 0; border-radius: 8px; padding: 9px 12px; background: transparent; color: var(--ink); cursor: pointer; font: inherit; }
+.switch button[aria-pressed="true"] { background: var(--deep); color: #fff; }
+
+/* Шапка */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(242, 242, 242, .8); -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%); border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 21; background: var(--paper); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 68px; }
+.brand { font-weight: 700; letter-spacing: .14em; color: var(--deep); text-decoration: none; font-size: var(--s0); }
+.top nav { display: flex; gap: 1.6rem; font-size: var(--s0); }
+.top nav a { text-decoration: none; color: var(--ink-2); }
+.top .btn { min-height: 46px; font-size: var(--s0); padding: 0 1.1rem; }
+@media (max-width: 860px) { .top nav { display: none; } }
+
+/* Первый экран */
+.hero { position: relative; overflow: hidden; padding-block: 3rem 3.5rem; }
+.hero::before { content: ""; position: absolute; inset: -20% -10% auto; height: 120%; z-index: 0; pointer-events: none; filter: blur(46px);
+  background: radial-gradient(34% 40% at 74% 32%, rgba(125, 211, 203, .7), transparent 70%), radial-gradient(30% 34% at 92% 70%, rgba(182, 228, 233, .9), transparent 70%), radial-gradient(28% 30% at 10% 10%, rgba(173, 226, 225, .6), transparent 70%);
+  animation: drift 24s ease-in-out infinite alternate; }
+@keyframes drift { to { transform: translate3d(2%, -2%, 0) scale(1.06); } }
+.hero .wrap { position: relative; z-index: 1; display: grid; gap: 2.5rem; align-items: center; }
+@media (min-width: 900px) { .hero .wrap { grid-template-columns: 1.05fr .95fr; } }
+.hero .wrap > * { min-width: 0; }
+.h-top { grid-area: top; } .h-rest { grid-area: rest; } .stage { grid-area: stage; }
+@media (min-width: 900px) { .hero .wrap { grid-template-areas: 'top stage' 'rest stage'; row-gap: 0; align-items: start; } .stage { align-self: center; } }
+.eyebrow { display: inline-flex; align-items: center; gap: .55rem; font-size: var(--s0); font-weight: 600; color: var(--deep); background: rgba(255,255,255,.75); border: 1px solid var(--line); padding: .4rem .9rem; border-radius: 99px; }
+.eyebrow i { width: .55rem; height: .55rem; border-radius: 50%; background: var(--teal); }
+.hero h1 { font-size: var(--s4); margin: 1.1rem 0 1rem; }
+@media (min-width: 900px) { .hero h1 { font-size: var(--s5); } }
+.hero h1 span { color: var(--deep); }
+.lead { font-size: var(--s1); color: var(--ink-2); max-width: 34rem; }
+.ticks { list-style: none; padding: 0; margin: 1.5rem 0; display: grid; gap: .7rem; }
+.ticks li { display: flex; gap: .75rem; align-items: flex-start; font-size: var(--s0); font-weight: 500; }
+.ticks svg { flex: none; margin-top: .2rem; }
+.buy { display: grid; gap: .8rem; padding: 1.25rem; border-radius: 22px; background: rgba(255,255,255,.72); border: 1px solid rgba(255,255,255,.95); box-shadow: 0 24px 50px -30px rgba(17, 80, 96, .5); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); max-width: 34rem; }
+.buy .row { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem 1rem; }
+.price { font-size: var(--s4); font-weight: 700; color: var(--ink); line-height: 1; }
+.per { color: var(--ink-2); font-size: var(--s0); }
+.buy .btn { width: 100%; }
+.callback { display: flex; align-items: center; gap: .55rem; font-size: var(--s0); color: var(--ink-2); }
+.callback b { color: var(--ink); font-weight: 600; }
+.dot { width: .6rem; height: .6rem; border-radius: 50%; background: #2bb673; box-shadow: 0 0 0 4px rgba(43, 182, 115, .2); }
+.delivery { display: flex; flex-wrap: wrap; gap: .4rem; }
+.chip { font-size: 1rem; padding: .25rem .7rem; border-radius: 99px; border: 1px solid var(--line); background: #fff; color: var(--ink-2); }
+.legal { margin-top: 1rem; font-size: 1rem; color: var(--ink-2); }
+.legal b { color: var(--deep); font-weight: 600; }
+
+/* Флакон: лицевая сторона этикетки из PDF на макете стекла */
+.stage { position: relative; display: flex; align-items: center; justify-content: center; gap: 1.5rem; min-height: 30rem; }
+.leaf { position: absolute; width: 60%; max-width: 320px; left: 8%; top: -6%; opacity: .45; transform: rotate(-10deg); }
+.bwrap { position: relative; display: grid; justify-items: center; }
+.stickers { position: relative; display: grid; gap: 1rem; }
+.bottle { position: relative; width: min(48vw, 230px); aspect-ratio: 207 / 470; filter: drop-shadow(0 40px 40px rgba(17, 80, 96, .28)); }
+.cap { position: absolute; left: 31%; right: 31%; top: 0; height: 13%; border-radius: 10px 10px 4px 4px; background: linear-gradient(90deg, #0b3c48, #1f6f7c 45%, #0e4a58); }
+.cap::after { content: ""; position: absolute; inset: 18% 0 auto; height: 6%; background: rgba(255,255,255,.18); }
+.neck { position: absolute; left: 35%; right: 35%; top: 12.5%; height: 4%; background: linear-gradient(90deg, #cfe9e8, #fff 40%, #cfe9e8); }
+.body { position: absolute; left: 0; right: 0; top: 16%; bottom: 0; border-radius: 26px 26px 30px 30px; overflow: hidden; background: #f2f2f2 url(data:image/webp;base64,__FRONT__) center / cover no-repeat; }
+.body::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.08), rgba(255,255,255,.35) 18%, transparent 34%, transparent 70%, rgba(255,255,255,.25) 82%, rgba(0,0,0,.1)); }
+.floor { margin-top: -6px; width: 80%; height: 22px; border-radius: 50%; background: radial-gradient(closest-side, rgba(17, 80, 96, .3), transparent); }
+.sticker { display: grid; gap: .15rem; padding: .8rem 1rem; border-radius: 16px; background: rgba(255,255,255,.85); border: 1px solid #fff; box-shadow: 0 16px 34px -20px rgba(17, 80, 96, .6); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.sticker b { font-size: var(--s2); color: var(--deep); line-height: 1; }
+.sticker span { font-size: 1rem; color: var(--ink-2); }
+
+.mark { margin-top: .5rem; text-align: center; font-size: 1rem; color: var(--ink-2); }
+
+/* Полоса доверия */
+.trust { border-block: 1px solid var(--line); background: rgba(255,255,255,.55); padding-block: 1.25rem; }
+.trust ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+@media (min-width: 900px) { .trust ul { grid-template-columns: repeat(4, 1fr); } }
+.trust li { display: flex; gap: .7rem; align-items: center; font-size: var(--s0); line-height: 1.35; }
+.trust li svg { flex: none; }
+.trust small { display: block; color: var(--ink-2); font-size: 1rem; }
+
+/* Блоки */
+section.block { padding-block: 4.5rem; }
+.kicker { font-size: 1rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); margin-bottom: .7rem; }
+.block h2 { font-size: var(--s3); max-width: 40rem; }
+@media (min-width: 900px) { .block h2 { font-size: var(--s4); } }
+.block .lead { margin-top: 1rem; }
+.split { display: grid; gap: 2.5rem; margin-top: 2.5rem; }
+@media (min-width: 900px) { .split { grid-template-columns: 1fr 1fr; align-items: start; } }
+.split > * { min-width: 0; }
+.was { display: grid; gap: 1rem; }
+.was li { list-style: none; display: flex; gap: .9rem; padding: 1.1rem 1.2rem; border-radius: 18px; background: #fff; border: 1px solid var(--line); }
+.was ul { padding: 0; margin: 0; display: grid; gap: .8rem; }
+.was .x { flex: none; width: 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center; background: #fbe9e7; color: #a33a2b; font-weight: 700; }
+.nums { display: grid; gap: 1rem; grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 560px) { .nums { grid-template-columns: 1fr; } }
+.num { padding: 1.3rem 1.1rem; border-radius: 20px; background: linear-gradient(160deg, #ffffff, #eaf6f5); border: 1px solid #fff; box-shadow: 0 20px 40px -30px rgba(17, 80, 96, .6); }
+.num b { display: block; font-size: var(--s4); line-height: 1; color: var(--deep); font-weight: 700; }
+.num span { display: block; margin-top: .6rem; font-size: var(--s0); color: var(--ink-2); line-height: 1.4; }
+.note { margin-top: 1.2rem; font-size: var(--s0); color: var(--ink-2); }
+.cta-row { margin-top: 2rem; display: flex; flex-wrap: wrap; align-items: center; gap: .8rem 1.4rem; }
+.cta-row p { font-size: var(--s0); color: var(--ink-2); }
+
+/* Предложение */
+.offer { background: linear-gradient(180deg, transparent, rgba(173, 226, 225, .35)); }
+.offer-card { display: grid; gap: 2rem; padding: 1.5rem; border-radius: 28px; background: rgba(255,255,255,.82); border: 1px solid #fff; box-shadow: 0 40px 80px -50px rgba(17, 80, 96, .7); margin-top: 2.5rem; }
+@media (min-width: 900px) { .offer-card { grid-template-columns: 1fr 1fr; padding: 2.5rem; } }
+.offer-card > * { min-width: 0; }
+.incl { list-style: none; margin: 1rem 0 1.5rem; padding: 0; display: grid; gap: .7rem; }
+.incl li { display: flex; gap: .7rem; font-size: var(--s0); }
+.steps3 { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: .8rem; }
+.steps3 li { counter-increment: s; display: flex; gap: .8rem; align-items: flex-start; font-size: var(--s0); }
+.steps3 li::before { content: counter(s); flex: none; width: 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center; background: var(--deep); color: #fff; font-weight: 700; font-size: 1rem; }
+.form { display: grid; gap: .9rem; }
+.form label { font-weight: 600; font-size: var(--s0); }
+.form input[type=text], .form input[type=tel] { width: 100%; min-height: 56px; border-radius: 14px; border: 1.5px solid rgba(17, 80, 96, .3); padding: 0 1rem; font: 400 var(--s0) var(--font); color: var(--ink); background: #fff; }
+.form input:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgba(76, 179, 178, .2); outline: none; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+.seg label { display: flex; align-items: center; justify-content: center; gap: .5rem; min-height: 52px; border-radius: 12px; border: 1.5px solid rgba(17, 80, 96, .25); background: #fff; font-weight: 500; cursor: pointer; }
+.seg input { accent-color: var(--deep); width: 1.1rem; height: 1.1rem; }
+.seg label:has(input:checked) { border-color: var(--deep); background: #eaf6f5; }
+.consent { display: flex; gap: .7rem; align-items: flex-start; font-weight: 400 !important; font-size: 1rem !important; color: var(--ink-2); }
+.consent input { width: 1.4rem; height: 1.4rem; flex: none; margin-top: .15rem; accent-color: var(--deep); }
+.after { font-size: 1rem; color: var(--ink-2); text-align: center; }
+.form-msg { padding: .8rem 1rem; border-radius: 12px; background: #fff6dc; border-left: 5px solid #c99a1a; font-size: 1rem; }
+
+/* Закреплённая кнопка на телефоне */
+.bar { display: none; }
+@media (max-width: 860px) {
+  .bar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; align-items: center; justify-content: space-between; gap: .8rem;
+    padding: .7rem max(16px, env(safe-area-inset-right, 0px)) calc(.7rem + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    background: rgba(255,255,255,.92); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid var(--line); }
+  .bar b { display: block; font-size: var(--s1); line-height: 1.1; }
+  .bar span { font-size: 1rem; color: var(--ink-2); }
+  .bar .btn { min-height: 50px; padding: 0 1.3rem; font-size: var(--s0); }
+  body { padding-bottom: 84px; }
+}
+.mocknote { font-size: 1rem; color: var(--ink-2); text-align: center; padding-block: 2rem 3rem; }
+@media (max-width: 899px) { .hero .wrap { grid-template-areas: 'top' 'stage' 'rest'; } }
+@media (max-width: 560px) { .stage { min-height: 0; } .bottle { width: 38vw; } .leaf { width: 70%; } .stickers { gap: .6rem; } .sticker { padding: .6rem .8rem; } .sticker b { font-size: var(--s1); } }
+@media (prefers-reduced-motion: reduce) { .hero::before { animation: none; } .btn { transition: none; } }
+</style>
+
+<div class="switchbar gut"><span>Макет. Шрифт:</span><div class="switch" role="group" aria-label="Вариант шрифта">
+  <button type="button" data-f="golos" aria-pressed="true">A · Golos Text</button>
+  <button type="button" data-f="manrope" aria-pressed="false">B · Manrope</button>
+</div></div>
+
+<header class="top gut"><div class="wrap">
+  <a class="brand" href="#">BETULA AQUA</a>
+  <nav aria-label="Разделы"><a href="#forma">Почему раствор</a><a href="#">Наука</a><a href="#">Как принимать</a><a href="#offer">Цена и доставка</a></nav>
+  <a class="btn" href="#offer">Заказать</a>
+</div></header>
+
+<main>
+<section class="hero gut"><div class="wrap">
+  <div class="h-top">
+    <span class="eyebrow"><i></i>Антиоксидант из бересты берёзы</span>
+    <h1>Сил должно хватать <span>на всё, что вы задумали</span></h1>
+  </div>
+  <div class="h-rest">
+    <p class="lead">BETULA AQUA — раствор бетулина берёзы с антиоксидантным и общеукрепляющим действием. Одна порция утром в стакане воды. Курс 21 день.</p>
+    <ul class="ticks">
+      <li>__TICK__20 мг бетулина в каждой порции</li>
+      <li>__TICK__Без капсул: развели в воде и выпили</li>
+      <li>__TICK__Действие указано в свидетельстве о госрегистрации</li>
+    </ul>
+    <div class="buy">
+      <div class="row"><span class="price">2 190 ₽</span><span class="per">флакон 250 мл · курс 21 день</span></div>
+      <a class="btn" href="#offer">Заказать за 2 190 ₽</a>
+      <p class="callback"><span class="dot" aria-hidden="true"></span><span><b>Перезвоним за 3 минуты.</b> Оплата на сайте не нужна</span></p>
+      <div class="delivery" aria-label="Доставка"><span class="chip">По всей России</span><span class="chip">СДЭК</span><span class="chip">Ozon</span><span class="chip">Авито Доставка</span></div>
+    </div>
+    <p class="legal"><b>Не является лекарственным средством.</b> Есть противопоказания, перед покупкой прочитайте раздел «Кому нельзя».</p>
+  </div>
+  <div class="stage">
+    <img class="leaf" alt="" src="data:image/webp;base64,__LEAF__">
+    <div class="bwrap"><div class="bottle" role="img" aria-label="Флакон BETULA AQUA, 250 мл">
+      <div class="cap"></div><div class="neck"></div><div class="body"></div>
+    </div><div class="floor" aria-hidden="true"></div></div>
+    <div class="stickers">
+      <div class="sticker"><b>20 мг</b><span>бетулина в порции</span></div>
+      <div class="sticker"><b>21</b><span>утро — один курс</span></div>
+      <div class="sticker"><b>250 мл</b><span>флакон</span></div>
+    </div>
+  </div>
+</div></section>
+
+<div class="trust gut"><div class="wrap"><ul>
+  <li>__I_DOC__<span>Свидетельство о госрегистрации<small>№ RU.77.99.11.003.R.003611.10.20</small></span></li>
+  <li>__I_FACTORY__<span>Сделано в Сибири<small>ООО «ДОБРОЗДРАВ», Новосибирская обл.</small></span></li>
+  <li>__I_BOOK__<span>3 научные работы о бетулине<small>с открытыми ссылками</small></span></li>
+  <li>__I_TRUCK__<span>Напрямую с завода<small>доставка по всей России</small></span></li>
+</ul></div></div>
+
+<section class="block gut" id="forma"><div class="wrap">
+  <p class="kicker">Почему раствор</p>
+  <h2>Дело не в силе воли</h2>
+  <p class="lead">Курс бросают не из-за лени, а когда он сложный. Поэтому здесь одно действие утром. И важно, в каком виде к вам попадает вещество.</p>
+  <div class="split">
+    <div class="was">
+      <ul>
+        <li><span class="x" aria-hidden="true">×</span><span>Много капсул в разное время, легко сбиться на второй неделе</span></li>
+        <li><span class="x" aria-hidden="true">×</span><span>Непонятно, сколько вещества вы получаете и зачем</span></li>
+        <li><span class="x" aria-hidden="true">×</span><span>Бетулин почти не растворяется в воде, а форма имеет значение</span></li>
+      </ul>
+    </div>
+    <div>
+      <div class="nums">
+        <div class="num"><b>2 г/л</b><span>бетулина в коллоидном растворе</span></div>
+        <div class="num"><b>20 мг</b><span>в одной порции 10 мл</span></div>
+        <div class="num"><b>1 раз</b><span>в день, утром, до 12:00</span></div>
+      </div>
+      <p class="note">Коллоидный раствор — мельчайшие частицы равномерно распределены в воде. Поэтому флакон перед приёмом взбалтывают.</p>
+    </div>
+  </div>
+  <div class="cta-row"><a class="btn" href="#offer">Заказать за 2 190 ₽</a><p>Перезвоним за 3 минуты</p></div>
+</div></section>
+
+<section class="block offer gut" id="offer"><div class="wrap">
+  <p class="kicker">Цена и доставка</p>
+  <h2>Один флакон — 21 утро</h2>
+  <div class="offer-card">
+    <div>
+      <div class="row" style="display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem"><span class="price">2 190 ₽</span><span class="per">за флакон 250 мл</span></div>
+      <ul class="incl">
+        <li>__TICK__Раствор бетулина берёзы, 2 г/л</li>
+        <li>__TICK__Состав: вода очищенная и экстракт бересты</li>
+        <li>__TICK__Инструкция и отметки приёма на 21 день</li>
+        <li>__TICK__Доставка по России: СДЭК, Ozon, Авито Доставка</li>
+        <li>__TICK__Возврат — условия обсудите с менеджером</li>
+      </ul>
+      <h3 style="font-size:var(--s1);margin-bottom:.8rem">Что будет после заявки</h3>
+      <ol class="steps3">
+        <li>Менеджер завода перезвонит за 3 минуты</li>
+        <li>Уточнит адрес и выберет с вами доставку</li>
+        <li>Отправит заказ и пришлёт трек-номер</li>
+      </ol>
+    </div>
+    <form class="form" id="mockform">
+      <label for="n">Как к вам обращаться</label><input id="n" type="text" autocomplete="name">
+      <label for="t">Телефон</label><input id="t" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7">
+      <span style="font-weight:600">Как удобнее связаться</span>
+      <div class="seg"><label><input type="radio" name="via" checked> Звонок</label><label><input type="radio" name="via"> MAX</label></div>
+      <label class="consent"><input type="checkbox"> <span>Согласен(на) на обработку данных для связи по заявке. <a href="#">Политика</a></span></label>
+      <button class="btn" type="submit">Заказать за 2 190 ₽</button>
+      <p class="after">Перезвоним за 3 минуты. Оплата на сайте не нужна.</p>
+    </form>
+  </div>
+</div></section>
+<p class="mocknote gut">Макет: первый экран и два блока. Флакон собран из лицевой стороны этикетки (PDF), фото новой тары заменит его.</p>
+</main>
+
+<div class="bar"><div><b>2 190 ₽</b><span>перезвоним за 3 минуты</span></div><a class="btn" href="#offer">Заказать</a></div>
+
+<script>
+(function () {
+  var btns = document.querySelectorAll('.switch button');
+  btns.forEach(function (b) { b.addEventListener('click', function () {
+    document.documentElement.setAttribute('data-font', b.getAttribute('data-f'));
+    btns.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+  }); });
+  var f = document.getElementById('mockform');
+  f.addEventListener('submit', function (e) { e.preventDefault(); if (f.querySelector('.form-msg')) return;
+    var p = document.createElement('p'); p.className = 'form-msg'; p.textContent = 'Макет: на сайте заявка уйдёт менеджеру. Здесь ничего не отправляется.'; f.appendChild(p); });
+})();
+</script>
