@@ -1,11 +1,35 @@
 {
-  "_about": "Каналы для QR. У каждого свой код и своя метка. Ссылка в QR: <base_url>/q/<код>. Новые каналы добавлять сюда и запускать build.py.",
-  "channels": [
-    {"code": "label", "name": "Этикетка на флаконе"},
-    {"code": "trifold", "name": "Трифолд"},
-    {"code": "brochure", "name": "Брошюра"},
-    {"code": "pass-on", "name": "Карточка «Передай близкому»"},
-    {"code": "insert", "name": "Вкладыш в заказ"},
-    {"code": "site", "name": "Кнопка «Открыть в MAX» на сайте"}
-  ]
+ "_about": "Каналы для QR. Ссылка в QR: <base_url>/q/<код>. to: howto — страница «Как принимать», landing — продающая страница, max — бот MAX (пока ссылки нет, продающая страница).",
+ "channels": [
+  {
+   "code": "label",
+   "name": "Этикетка на флаконе",
+   "to": "howto"
+  },
+  {
+   "code": "trifold",
+   "name": "Трифолд",
+   "to": "landing"
+  },
+  {
+   "code": "brochure",
+   "name": "Брошюра",
+   "to": "landing"
+  },
+  {
+   "code": "pass-on",
+   "name": "Карточка «Передай близкому»",
+   "to": "landing"
+  },
+  {
+   "code": "insert",
+   "name": "Вкладыш в заказ",
+   "to": "landing"
+  },
+  {
+   "code": "site",
+   "name": "Кнопка «Открыть в MAX» на сайте",
+   "to": "max"
+  }
+ ]
 }

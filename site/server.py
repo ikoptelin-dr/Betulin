@@ -50,7 +50,7 @@ class App:
         self.cfg = load_json(config_path)
         content = Path(content_dir)
         self.site = load_json(content / "site.ru.json")
-        self.channels = {c["code"] for c in load_json(content / "channels.json")["channels"]}
+        self.channels = {c["code"]: c.get("to", "landing") for c in load_json(content / "channels.json")["channels"]}
         self.base = urlparse(self.cfg["base_url"]).path.rstrip("/")
         self.lock = threading.Lock()
         self.recent = []
@@ -159,6 +159,8 @@ def make_handler(app):
                 return self._send(HTTPStatus.NOT_FOUND, b"not found", "text/plain; charset=utf-8")
             if rel == "/":
                 return self._file("index.html", "no-cache")
+            if rel == "/kak-prinimat":
+                return self._file("kak-prinimat.html", "no-cache")
             if rel == "/policy":
                 return self._file("policy.html", "no-cache")
             if rel == "/spasibo":
@@ -174,10 +176,16 @@ def make_handler(app):
         def _qr(self, code):
             if not CODE_RE.match(code):
                 return self._send(HTTPStatus.NOT_FOUND, b"not found", "text/plain; charset=utf-8")
-            channel = code if code in app.channels else "unknown"
-            target = app.max_url(channel)
-            app.row("visits.csv", ["ts_utc", "channel", "target"], [app.now(), channel, "max" if target else "site"])
-            self._redirect(target or f"{app.base}/?s={channel}")
+            to = app.channels.get(code)
+            channel = code if to else "unknown"
+            if to == "max" and app.max_url(channel):
+                kind, target = "max", app.max_url(channel)
+            elif to == "howto":
+                kind, target = "howto", f"{app.base}/kak-prinimat?s={channel}"
+            else:
+                kind, target = "landing", f"{app.base}/?s={channel}"
+            app.row("visits.csv", ["ts_utc", "channel", "target"], [app.now(), channel, kind])
+            self._redirect(target)
 
         def do_POST(self):
             rel = self._rel()

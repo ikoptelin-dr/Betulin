@@ -43,7 +43,7 @@ class BuildTests(unittest.TestCase):
             self.assertTrue(c["publish"], i)
             self.assertIn(c["status"], b.allowed, i)
             self.assertTrue(c["source"], i)
-        for name in ("index.html", "policy.html", "spasibo.html"):
+        for name in ("index.html", "kak-prinimat.html", "policy.html", "spasibo.html"):
             self.assertTrue((Path(self.tmp) / "dist" / name).exists(), name)
 
     def test_build_fails_on_unpublished_claim(self):
@@ -90,6 +90,7 @@ class BuildTests(unittest.TestCase):
                 ui_texts.append(o)
 
         walk(site)
+        walk(json.loads((ROOT / "content" / "landing.ru.json").read_text(encoding="utf-8")))
         banned = re.compile(r"исцел|лечит|излеч|помога|восстанов|очищ|ДНК|впервые|единственн|100\s?%", re.I)
         # политика и ошибки содержат слова про лекарства и удаление данных, проверяем остальное
         bad = [t for t in ui_texts if banned.search(t) and "лекарств" not in t]
@@ -118,7 +119,7 @@ class BuildTests(unittest.TestCase):
     def test_required_disclaimer_present_on_every_page(self):
         b = self.builder()
         b.build()
-        for name in ("index.html", "policy.html", "spasibo.html"):
+        for name in ("index.html", "kak-prinimat.html", "policy.html", "spasibo.html"):
             text = (Path(self.tmp) / "dist" / name).read_text(encoding="utf-8")
             self.assertIn("Не является лекарственным средством", text, name)
 
@@ -140,6 +141,15 @@ class BuildTests(unittest.TestCase):
         docs.mkdir()
         (docs / "sgr.pdf").write_bytes(b"%PDF-1.4")
         self.assertIn("docs/sgr.pdf", self.builder().index())
+
+    def test_landing_has_form_research_caveat_and_no_fake_proof(self):
+        text = self.builder().landing()
+        self.assertEqual(text.count('name="consent"'), 1)
+        self.assertNotRegex(text, r'name="consent"[^>]*checked')
+        self.assertIn("не переносятся на человека напрямую", text)
+        self.assertIn("не обещаем", text)
+        self.assertNotRegex(text, r"отзыв|рейтинг|покупател[ейя] уже|гарантир", )
+        self.assertNotIn("style=", text)
 
     def test_consent_checkbox_is_not_prechecked(self):
         text = self.builder().index()
@@ -193,7 +203,7 @@ class ServerTests(unittest.TestCase):
             return list(csv.DictReader(f))
 
     def test_pages_open(self):
-        for path in ("/betula-aqua/", "/betula-aqua/policy", "/betula-aqua/spasibo", "/betula-aqua/static/style.css", "/betula-aqua/health"):
+        for path in ("/betula-aqua/", "/betula-aqua/kak-prinimat", "/betula-aqua/policy", "/betula-aqua/spasibo", "/betula-aqua/static/style.css", "/betula-aqua/health"):
             r, _ = self.req("GET", path)
             self.assertEqual(r.status, 200, path)
 
@@ -223,7 +233,13 @@ class ServerTests(unittest.TestCase):
         rows = self.rows("visits.csv")
         self.assertEqual(len(rows), before + 1)
         self.assertEqual(rows[-1]["channel"], "trifold")
-        self.assertEqual(rows[-1]["target"], "site")
+        self.assertEqual(rows[-1]["target"], "landing")
+
+    def test_label_qr_goes_to_howto_page(self):
+        r, _ = self.req("GET", "/betula-aqua/q/label")
+        self.assertEqual(r.getheader("Location"), "/betula-aqua/kak-prinimat?s=label")
+        r, _ = self.req("GET", "/betula-aqua/q/site")
+        self.assertEqual(r.getheader("Location"), "/betula-aqua/?s=site")
 
     def test_qr_unknown_and_invalid_codes(self):
         r, _ = self.req("GET", "/betula-aqua/q/typo-code")
@@ -245,12 +261,14 @@ class ServerTests(unittest.TestCase):
         self.app.cfg["max_bot_link"] = "https://max.example/bot"
         self.app.cfg["max_start_param"] = "start"
         try:
-            r, _ = self.req("GET", "/betula-aqua/q/label")
+            r, _ = self.req("GET", "/betula-aqua/q/site")
             self.assertEqual(r.status, 302)
-            self.assertEqual(r.getheader("Location"), "https://max.example/bot?start=label")
+            self.assertEqual(r.getheader("Location"), "https://max.example/bot?start=site")
             self.app.cfg["max_bot_link"] = "https://max.example/bot?x=1"
-            r, _ = self.req("GET", "/betula-aqua/q/label")
-            self.assertEqual(r.getheader("Location"), "https://max.example/bot?x=1&start=label")
+            r, _ = self.req("GET", "/betula-aqua/q/site")
+            self.assertEqual(r.getheader("Location"), "https://max.example/bot?x=1&start=site")
+            r, _ = self.req("GET", "/betula-aqua/q/trifold")
+            self.assertEqual(r.getheader("Location"), "/betula-aqua/?s=trifold")
         finally:
             self.app.cfg["max_bot_link"] = ""
 
