@@ -143,7 +143,7 @@ def make_handler(app):
             ctype = {
                 ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
                 ".js": "text/javascript; charset=utf-8", ".pdf": "application/pdf",
-                ".svg": "image/svg+xml", ".png": "image/png",
+                ".svg": "image/svg+xml", ".png": "image/png", ".woff2": "font/woff2",
             }.get(target.suffix.lower(), "application/octet-stream")
             self._send(HTTPStatus.OK, target.read_bytes(), ctype, cache)
 
@@ -170,7 +170,7 @@ def make_handler(app):
             if rel.startswith("/q/"):
                 return self._qr(rel[3:])
             if rel.startswith("/static/") or rel.startswith("/docs/"):
-                return self._file(rel, "public, max-age=3600")
+                return self._file(rel, "public, max-age=604800" if rel.endswith(".woff2") else "public, max-age=3600")
             return self._send(HTTPStatus.NOT_FOUND, b"not found", "text/plain; charset=utf-8")
 
         def _qr(self, code):

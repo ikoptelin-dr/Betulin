@@ -96,6 +96,8 @@ class Builder:
             '<meta name="viewport" content="width=device-width, initial-scale=1">'
             f"<title>{title}</title>{d}"
             '<link rel="icon" href="data:,">'
+            f'<link rel="preload" href="{self.base}/static/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>'
+            f'<link rel="preload" href="{self.base}/static/fonts/golos-text-cyrillic.woff2" as="font" type="font/woff2" crossorigin>'
             f'<link rel="stylesheet" href="{self.base}/static/style.css">'
             "</head>"
         )
@@ -121,7 +123,6 @@ class Builder:
             f'<p>{self.claimed(f["maker"])}</p>'
             f'<p><a href="{self.base}/#dokumenty">{self.ui(f["docs_link"])}</a></p>'
             f'<p><a href="{self.base}/policy">{self.ui(f["policy"])}</a></p>'
-            f'<p class="muted">{self.ui(f["updated"])}</p>'
             "</div></footer>"
         )
 
@@ -412,8 +413,7 @@ class Builder:
         (self.out / "static").mkdir(parents=True)
         for name, text in pages.items():
             (self.out / name).write_text(text, encoding="utf-8")
-        for f in (ROOT / "static").iterdir():
-            shutil.copy2(f, self.out / "static" / f.name)
+        shutil.copytree(ROOT / "static", self.out / "static", dirs_exist_ok=True)
         if self.docs_dir.exists():
             (self.out / "docs").mkdir()
             for f in self.docs_dir.iterdir():

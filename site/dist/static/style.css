@@ -1,3 +1,12 @@
+@font-face { font-family: 'Manrope'; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(fonts/manrope-cyrillic.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: 'Manrope'; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(fonts/manrope-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212; }
+@font-face { font-family: 'Golos Text'; font-style: normal; font-weight: 400 900; font-display: swap;
+  src: url(fonts/golos-text-cyrillic.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: 'Golos Text'; font-style: normal; font-weight: 400 900; font-display: swap;
+  src: url(fonts/golos-text-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212; }
+
 /* Крупный шрифт для чтения с телефона: база 20px, контраст выше 7:1 */
 :root {
   --base: 20px;
@@ -10,22 +19,27 @@
   --brand-ink: #ffffff;
   --note: #fff6dc;
   --note-line: #c99a1a;
+  --font-display: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Golos Text', 'Segoe UI', system-ui, sans-serif;
   color-scheme: light;
 }
 * { box-sizing: border-box; }
 html { font-size: var(--base); -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
-  font-family: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  line-height: 1.6;
+  font-family: var(--font-body);
+  font-weight: 400; line-height: 1.62; letter-spacing: .005em;
+  font-variant-numeric: lining-nums; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
 }
 .wrap { max-width: 42rem; margin: 0 auto; padding: 0 1rem; }
 section { padding: 2rem 0; }
 .tint { background: var(--tint); }
-h1, h2, h3 { line-height: 1.25; margin: 0 0 .75rem; text-wrap: balance; }
-h1 { font-size: 2.4rem; letter-spacing: .02em; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 800; letter-spacing: -.02em; line-height: 1.15; margin: 0 0 .75rem; text-wrap: balance; }
+p, li { text-wrap: pretty; }
+strong, b { font-weight: 700; }
+h1 { font-size: 2.4rem; }
 h2 { font-size: 1.7rem; }
-h3 { font-size: 1.25rem; margin-top: 1.5rem; }
+h3 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.01em; margin-top: 1.5rem; }
 .small-h { font-size: 1rem; margin: 1rem 0 .25rem; }
 p, ul, ol { margin: 0 0 1rem; }
 ul { padding-left: 1.3rem; }
@@ -35,6 +49,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
   outline: 3px solid #b35c00; outline-offset: 2px;
 }
 .muted { color: var(--muted); font-size: .9rem; }
+.lead { color: #243b41; }
 .lead { font-size: 1.25rem; }
 .badge {
   display: inline-block; padding: .4rem .8rem; border: 2px solid var(--brand);
@@ -50,7 +65,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 
 .top { border-bottom: 1px solid var(--line); background: var(--bg); }
 .top .wrap { display: flex; flex-wrap: wrap; gap: .25rem 1rem; align-items: center; padding-top: .5rem; padding-bottom: .5rem; }
-.brand { font-weight: 800; letter-spacing: .06em; text-decoration: none; color: var(--brand); font-size: 1.15rem; }
+.brand { font-family: var(--font-display); font-weight: 800; letter-spacing: .16em; text-decoration: none; color: var(--brand); font-size: 1.15rem; }
 nav { display: flex; flex-wrap: wrap; gap: 0 .25rem; }
 nav a { padding: .6rem .5rem; min-height: 44px; display: inline-flex; align-items: center; }
 
@@ -58,7 +73,7 @@ nav a { padding: .6rem .5rem; min-height: 44px; display: inline-flex; align-item
 .btns { display: flex; flex-wrap: wrap; gap: .75rem; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
-  min-height: 56px; padding: .6rem 1.4rem; font: inherit; font-weight: 700;
+  min-height: 56px; padding: .6rem 1.5rem; font: inherit; font-family: var(--font-display); font-weight: 700; letter-spacing: .01em;
   background: var(--brand); color: var(--brand-ink); border: 2px solid var(--brand);
   border-radius: .6rem; text-decoration: none; cursor: pointer;
 }
@@ -73,7 +88,7 @@ nav a { padding: .6rem .5rem; min-height: 44px; display: inline-flex; align-item
 .steps li::before {
   content: counter(step); position: absolute; left: 0; top: .15rem; width: 2.6rem; height: 2.6rem;
   border-radius: 50%; background: var(--brand); color: var(--brand-ink);
-  display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.3rem;
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; font-size: 1.3rem;
 }
 .steps h3 { margin: 0 0 .25rem; }
 
@@ -93,7 +108,7 @@ nav a { padding: .6rem .5rem; min-height: 44px; display: inline-flex; align-item
 .facts th { width: 40%; font-weight: 700; }
 
 details { border: 2px solid var(--line); border-radius: .6rem; margin-bottom: .75rem; background: #fff; }
-summary { cursor: pointer; padding: .9rem 1rem; font-weight: 700; min-height: 56px; display: flex; align-items: center; }
+summary { cursor: pointer; padding: .9rem 1rem; font-family: var(--font-display); font-weight: 700; min-height: 56px; display: flex; align-items: center; }
 details p { padding: 0 1rem; }
 
 .order { display: grid; gap: .5rem; margin: 1rem 0; }
@@ -212,3 +227,28 @@ body.lp .steps li::before, body.lp .tracker input:checked + span { background: v
   .glassnav .wrap { flex-wrap: nowrap; }
   .btn.small { width: auto; }
 }
+
+/* ---------- Типографика продающей страницы ---------- */
+.lp h2 { font-size: clamp(1.7rem, 4.2vw, 2.4rem); line-height: 1.12; margin-bottom: 1.1rem; }
+.lp h2::after { content: ""; display: block; width: 3.2rem; height: 5px; border-radius: 3px; margin-top: .7rem; background: linear-gradient(90deg, var(--lp-teal), var(--lp-sky)); }
+.lp .final h2::after { margin-inline: auto; }
+.lp .card h2::after { display: none; }
+.lp-hero h1 { font-weight: 600; font-size: clamp(2.2rem, 7vw, 3.5rem); line-height: 1.04; letter-spacing: -.03em; }
+.lp-hero h1 .grad { font-weight: 800; }
+.lp .lead { font-size: 1.22rem; line-height: 1.55; max-width: 36rem; }
+.lp .final .lead, .lp .narrow.lead { max-width: 42rem; }
+.final .lead { margin-inline: auto; }
+.pill { font-family: var(--font-display); letter-spacing: .02em; }
+.trust .label, .where { font-family: var(--font-display); }
+.tag { font-family: var(--font-display); letter-spacing: -.01em; }
+.price { font-family: var(--font-display); }
+.checks li { font-weight: 500; }
+.badge { font-family: var(--font-display); letter-spacing: .01em; }
+nav a { font-family: var(--font-display); font-weight: 600; text-decoration: none; }
+nav a:hover { text-decoration: underline; }
+.glass { font-weight: 400; }
+.lp .card h2 { font-size: 1.6rem; }
+.lp .foot .wrap { max-width: 70rem; }
+.lp .small-h { font-size: 1rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin: 1.25rem 0 .35rem; }
+.lp .small-h::after { display: none; }
+.lp .foot p { max-width: 46rem; }

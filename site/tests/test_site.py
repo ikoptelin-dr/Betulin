@@ -151,6 +151,16 @@ class BuildTests(unittest.TestCase):
         self.assertNotRegex(text, r"отзыв|рейтинг|покупател[ейя] уже|гарантир", )
         self.assertNotIn("style=", text)
 
+    def test_fonts_are_self_hosted_and_update_badge_removed(self):
+        css = (ROOT / "static" / "style.css").read_text(encoding="utf-8")
+        self.assertNotIn("googleapis", css)
+        self.assertNotIn("gstatic", css)
+        for f in re.findall(r"url\(fonts/([^)]+)\)", css):
+            self.assertTrue((ROOT / "static" / "fonts" / f).exists(), f)
+        for page in (self.builder().landing(), self.builder().index()):
+            self.assertNotIn("обновлён", page)
+            self.assertNotIn("13.11.2026", page)
+
     def test_consent_checkbox_is_not_prechecked(self):
         text = self.builder().index()
         self.assertRegex(text, r'name="consent"[^>]*required')
