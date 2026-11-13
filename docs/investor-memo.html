@@ -1,0 +1,121 @@
+<title>Бетулин: было и стало</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=PT+Sans:wght@400;700&family=PT+Mono&display=swap">
+<style>
+/* Layout: одна колонка записки, таблица «было = стало» в центре, сценарии сеткой из трёх */
+:root{
+  --bg:#f6f7f4; --paper:#ffffff; --fg:#1f2620; --muted:#5d6a60; --line:#d9ded6;
+  --accent:#3f6b4a; --accent-soft:#e6efe7; --warn:#8a5a14; --warn-soft:#f6ecd9;
+  --display:"PT Serif",Georgia,serif; --body:"PT Sans","Segoe UI",Arial,sans-serif; --mono:"PT Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141815; --paper:#1c211d; --fg:#e7ece6; --muted:#a3aea5; --line:#323a33;
+  --accent:#8fc19b; --accent-soft:#223327; --warn:#e2b46a; --warn-soft:#352a17; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141815; --paper:#1c211d; --fg:#e7ece6; --muted:#a3aea5; --line:#323a33;
+  --accent:#8fc19b; --accent-soft:#223327; --warn:#e2b46a; --warn-soft:#352a17; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:17px/1.55 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 56px}
+main{max-width:860px;margin:0 auto;display:grid;gap:28px}
+h1,h2{font-family:var(--display);text-wrap:balance;margin:0}
+h1{font-size:2.1rem;line-height:1.15}
+h2{font-size:1.35rem}
+p{margin:0;max-width:68ch}
+section{display:grid;gap:12px}
+.eyebrow{font:700 .78rem var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:1.1rem}
+.note{background:var(--warn-soft);color:var(--fg);border-left:4px solid var(--warn);padding:12px 16px;border-radius:4px}
+.tag{display:inline-block;font:700 .72rem var(--body);letter-spacing:.04em;padding:2px 7px;border-radius:3px;white-space:nowrap}
+.tag.a{background:var(--warn-soft);color:var(--warn)}
+.tag.f{background:var(--accent-soft);color:var(--accent)}
+.wrap{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;vertical-align:top;padding:10px 14px;border-bottom:1px solid var(--line)}
+th{font-size:.82rem;color:var(--muted);font-weight:700}
+tr:last-child td{border-bottom:0}
+td.num{text-align:right;font-family:var(--mono)}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:6px;min-width:0}
+.card.base{border-color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+.big{font:700 2rem var(--display);color:var(--accent)}
+.small{font-size:.9rem;color:var(--muted)}
+ul,ol{margin:0;padding-left:1.2em;display:grid;gap:6px;max-width:68ch}
+code{font-family:var(--mono);font-size:.92em}
+</style>
+
+<main>
+  <header style="display:grid;gap:10px">
+    <div class="eyebrow">Записка для инвестора · модель до начала работ · 13.11.2026</div>
+    <h1>Завод бетулина: было и стало</h1>
+    <p class="lead">Пакет «Запуск» за 5 дней превращает разовую продажу банки на маркетплейсе в базу покупателей, которые возвращаются и приводят близких. Ниже модель эффекта на каждую 1000 покупателей и способ проверить её через 90 дней.</p>
+    <p class="note"><b>Это прогноз, а не результат.</b> Работы ещё не проведены, данные завода (маржа, доля повторов, объём продаж) ещё не получены. Все цифры помечены: <span class="tag a">предположение</span> или <span class="tag f">из исследования</span>. После первых 90 дней их заменят факты.</p>
+  </header>
+
+  <section>
+    <h2>Было = стало</h2>
+    <div class="wrap"><table>
+      <thead><tr><th>Что</th><th>Было</th><th>Станет после пакета</th></tr></thead>
+      <tbody>
+        <tr><td>Контакт с покупателем</td><td>Нет: покупатель принадлежит маркетплейсу</td><td>Своя база в боте MAX и Telegram, с согласием и хранением в России</td></tr>
+        <tr><td>Второй заказ</td><td>Случайный: банка кончилась, человек забыл</td><td>Напоминание за 5 дней до конца банки, расчёт от дозировки</td></tr>
+        <tr><td>Рекомендации</td><td>Не учитываются</td><td>Личный код «Передай близкому», каждый пришедший виден</td></tr>
+        <tr><td>Откуда пришёл покупатель</td><td>Неизвестно</td><td>Свой QR и промокод на каждый канал: вкладыш, брошюра, автор, сообщество</td></tr>
+        <tr><td>Жалобы</td><td>Узнаём из отзыва с одной звездой</td><td>Вопрос о впечатлениях в середине банки, жалоба сразу у менеджера</td></tr>
+        <tr><td>Тексты и утверждения</td><td>Без сверки с документами</td><td>Каждая фраза со ссылкой на СГР, протокол или патент: меньше риска блокировки карточки</td></tr>
+        <tr><td>Доверие</td><td>«Поверьте нам»</td><td>Страница «Проверь сам»: документы открыты, ответы на частые вопросы</td></tr>
+        <tr><td>Управление</td><td>Смотрим только выручку</td><td>Недельная таблица: деньги, повторы, жалобы, входы по каналам</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Цифры на 1000 покупателей за 6 месяцев</h2>
+    <p>Считаем только вторую банку и новых людей по коду. Третья и следующие банки в модель не входят, поэтому она занижает эффект.</p>
+    <div class="wrap"><table>
+      <thead><tr><th>Допущение</th><th>Было</th><th>Осторожно</th><th>База</th><th>Хорошо</th><th>Пометка</th></tr></thead>
+      <tbody>
+        <tr><td>Дошли до бота с вкладыша и QR</td><td class="num">0%</td><td class="num">10%</td><td class="num">20%</td><td class="num">30%</td><td><span class="tag a">предположение</span></td></tr>
+        <tr><td>Купили вторую банку без бота</td><td class="num">15%</td><td class="num">15%</td><td class="num">15%</td><td class="num">15%</td><td><span class="tag a">предположение</span>, заменить данными завода</td></tr>
+        <tr><td>Купили вторую банку из бота</td><td class="num">—</td><td class="num">30%</td><td class="num">40%</td><td class="num">50%</td><td><span class="tag f">из исследования</span>: кейс агентства, около 30% базы заказывает раз в 1–2 месяца</td></tr>
+        <tr><td>Привели близкого по коду</td><td class="num">—</td><td class="num">5%</td><td class="num">10%</td><td class="num">15%</td><td><span class="tag a">предположение</span></td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid3">
+      <div class="card"><div class="eyebrow">Осторожно</div><div class="big">+10%</div><p class="small">вторых банок: 165 против 150. Плюс 5 новых покупателей по коду.</p></div>
+      <div class="card base"><div class="eyebrow">База</div><div class="big">+33%</div><p class="small">вторых банок: 200 против 150. Плюс 20 новых покупателей по коду.</p></div>
+      <div class="card"><div class="eyebrow">Хорошо</div><div class="big">+70%</div><p class="small">вторых банок: 255 против 150. Плюс 45 новых покупателей по коду.</p></div>
+    </div>
+    <p><b>В деньгах:</b> дополнительная маржа = (новые вторые банки + банки по коду) × маржа с банки. В базовом сценарии это 70 банок на каждую 1000 покупателей. При марже 500 ₽ с банки (пример, не данные завода) это 35 000 ₽ на каждую 1000 покупателей. Эти банки не стоят рекламы: человек уже купил однажды.</p>
+  </section>
+
+  <section>
+    <h2>Почему это реально</h2>
+    <ul>
+      <li>Рынок БАД в 2025 году вырос на 25% в деньгах и только на 1,3% в упаковках <span class="tag f">из исследования</span>, DSM Group. Новых покупателей мало, трафик дорожает, выигрывает тот, кто возвращает своих.</li>
+      <li>В США первый повторный заказ называют самым слабым местом категории; напоминание с действием в одно касание работает лучше скидки <span class="tag f">из исследования</span>, блоги отрасли.</li>
+      <li>С октября 2026 маркетплейсы проверяют карточки БАД по СГР <span class="tag f">из исследования</span>. Тексты, сверенные с документами, защищают продажи.</li>
+      <li>Сильного бренда бетулина с открытыми документами в выдаче не нашлось ни в России, ни в США <span class="tag f">из исследования</span>. Место свободно.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Как проверим через 90 дней</h2>
+    <ol>
+      <li>До старта: выгрузка заказов из кабинета продавца за 6 месяцев. Это точка «было»: доля повторов, маржа, число покупателей.</li>
+      <li>Каждую неделю: входы в бот по каналам, напоминания, переходы на карточку, заказы по промокодам, жалобы.</li>
+      <li>На 90-й день: доля вторых банок у тех, кто в боте, против тех, кто не в боте. Это главная цифра кейса.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Риски</h2>
+    <ul>
+      <li>Маркетплейс может запретить вкладыши с QR. Тогда вход идёт через брошюры, авторов и страницу «Проверь сам», а сценарий «Осторожно» становится реальнее.</li>
+      <li>Реклама в Telegram с 2027 года юридически под вопросом. Поэтому бот сначала в MAX, а QR ведёт на свою страницу.</li>
+      <li>Если продукт не даёт человеку причины вернуться, бот это не исправит. Это покажет вопрос о впечатлениях в первый месяц.</li>
+      <li>Тексты законов агенты читали в пересказах. Перед запуском нужна сверка с юристом.</li>
+    </ul>
+  </section>
+
+  <p class="small">Правила проекта: БАД описываем только формулировками из СГР, с пометкой «не является лекарством», без обещаний лечения. Оплату не принимаем, бот ведёт на карточку маркетплейса. Контакты собираем только с согласием.</p>
+</main>
